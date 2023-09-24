@@ -23,7 +23,8 @@ telegram-notification-frontend:
     - frontend/*
   script:
     - curl -s -X POST https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage 
+      -d parse_mode=markdown
       -d chat_id=-1001771539978 
-      -d text="std-022-024 собрал frontend $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job"
+      -d text="std-022-024 собрал frontend [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job)"
   needs:
     - build-frontend-code-job

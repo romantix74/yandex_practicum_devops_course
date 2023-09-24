@@ -1,9 +1,9 @@
-stages:
-  - build
-  - test
-  - notify
 include:
   - template: Security/SAST.gitlab-ci.yml
+
+cache:
+  paths:
+    - ${CI_PROJECT_DIR}/.m2/repository
 
 build-backend-code-job:
   stage: build  
@@ -15,9 +15,7 @@ build-backend-code-job:
   script:
     - cd backend
     - mvn package
-  cache:
-    paths:
-      - ${CI_PROJECT_DIR}/.m2/repository
+
   artifacts:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar

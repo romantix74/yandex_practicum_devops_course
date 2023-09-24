@@ -1,14 +1,13 @@
-stages:
-  - build
-  - notify
+include:
+  - template: Security/SAST.gitlab-ci.yml
 
 build-frontend-code-job:
   stage: build  
-  only:
-    changes:
-    - frontend/*
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /send notification/
+  # only:
+  #   changes:
+  #   - frontend/*
+  #   variables:
+  #     - $CI_COMMIT_MESSAGE =~ /send notification/
   script:        
     - cd frontend
     - npm install
@@ -16,7 +15,6 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
-
 
 telegram-notification-frontend:
   stage: notify

@@ -1,10 +1,9 @@
-include:
-  - '/backend/.gitlab-ci.yml'
-  - '/frontend/.gitlab-ci.yml'
 stages:
   - build
   - test
   - notify
-
+include:
+  - '/backend/.gitlab-ci.yml'
+  - '/frontend/.gitlab-ci.yml'
 
 

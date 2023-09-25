@@ -4,8 +4,8 @@ include:
 build-frontend-code-job:
   stage: build  
   only:
-    changes:
-    - frontend/*
+    # changes:
+    # - frontend/*
     variables:
       - $CI_COMMIT_MESSAGE =~ /send notification/
   script:        
@@ -23,7 +23,7 @@ sonarqube-frontend-sast:
     - sonar-scanner -Dsonar.projectName="$SONAR_PROJECT_KEY" -Dsonar.sources=./frontend -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.qualitygate.wait=true
   needs:
     - build-frontend-code-job
-    
+
 telegram-notification-frontend:
   stage: notify
   only:

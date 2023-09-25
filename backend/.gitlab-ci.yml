@@ -32,6 +32,9 @@ spotbugs-sast:
 
 sonarqube-backend-sast:
   stage: test
+  only:
+    changes:
+      - backend/*
   image: maven:3.8-openjdk-16
   script:
     - mvn -f ${CI_PROJECT_DIR}/backend -X verify sonar:sonar -Dsonar.projectName="$SONAR_PROJECT_KEY" -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACK -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_LOGIN  -Dsonar.qualitygate.wait=true

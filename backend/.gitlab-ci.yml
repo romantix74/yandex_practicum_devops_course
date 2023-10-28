@@ -13,9 +13,9 @@ cache:
 
 build-backend-code-job:
   stage: build  
-  only:
-    changes:
-      - backend/**/*
+  # only:
+  #   changes:
+  #     - backend/**/*
   #   variables:
   #     - $CI_COMMIT_MESSAGE =~ /send notification/
   script:

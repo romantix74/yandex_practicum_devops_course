@@ -48,3 +48,15 @@ telegram-notification-frontend:
       -d text="std-022-024 собрал frontend [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job)"
   needs:
     - build-frontend-code-job
+
+release:
+   stage: release
+   script:
+     - tar czvf sausage-store-${VERSION}.tar.gz frontend
+     - >
+        curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
+         --upload-file sausage-store-${VERSION}.tar.gz
+         ${NEXUS_REPO_URL}/${NEXUS_REPO_FRONTEND_NAME}/${VERSION}/sausage-store-${VERSION}.tar.gz
+   only:
+     changes:
+     - frontend/**/* 

@@ -39,7 +39,7 @@ build-backend-code-job:
 
   artifacts:
     paths:
-      - backend/target/sausage-store-0.0.${VERSION}.jar
+      - backend/target/sausage-store-${VERSION}.jar
       - ${CI_PROJECT_DIR}/.m2/ 
 
 

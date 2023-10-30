@@ -88,8 +88,6 @@ backend-upload-release:
       -Dmaven.repo.local=${MAVEN_REPO_PATH}
       -Dversion.application=${VERSION}
 
-
-
 deploy:
   stage: deploy
   before_script:

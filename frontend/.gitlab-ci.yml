@@ -86,6 +86,6 @@ frontend-deploy:
       export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; 
       export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
       setsid /bin/bash -s " < ./frontend/deploy.sh
-  # environment:
-  #   name: $CI_COMMIT_REF_SLUG/frontend
-  #   url: http://std-022-024.praktikum-services.tech/
+  environment:
+    name: $CI_COMMIT_REF_SLUG/frontend
+    url: http://std-022-024.praktikum-services.tech/

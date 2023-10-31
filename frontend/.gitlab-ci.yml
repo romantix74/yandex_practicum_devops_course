@@ -73,7 +73,7 @@ frontend-deploy:
   #   - chmod 600 ~/.ssh
   #   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   #   - chmod 644 ~/.ssh/known_hosts
-  .extends: .before_script
+  extends: .before_script
   script:
     - scp ./frontend/sausage-store-frontend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
     - >

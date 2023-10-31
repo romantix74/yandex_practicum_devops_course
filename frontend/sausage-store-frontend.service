@@ -4,7 +4,7 @@ After=network.target
 [Service]
 User=frontend
 Group=frontend
-WorkingDirectory=/opt/sausage-store/static/sausage-store/frontend/dist/frontend
+WorkingDirectory=/opt/sausage-store/static/frontend/dist/frontend
 Environment=REPORT_PATH=/var/sausage-store/reports
 Environment=LOG_PATH=/var/sausage-store/logs
 Restart=always

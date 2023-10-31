@@ -113,5 +113,5 @@ deploy:
       export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
       setsid /bin/bash -s " < ./backend/deploy.sh
   environment:
-    name: $CI_COMMIT_REF_SLUG/frontend
+    name: $CI_COMMIT_REF_SLUG/backend
     url: http://std-022-24.praktikum-services.tech/

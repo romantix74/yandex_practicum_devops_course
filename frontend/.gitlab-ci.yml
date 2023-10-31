@@ -88,4 +88,4 @@ frontend-deploy:
       setsid /bin/bash -s " < ./frontend/deploy.sh
   environment:
     name: $CI_COMMIT_REF_SLUG/frontend
-    url: http://std-022-024.praktikum-services.tech/
+    url: http://std-022-24.praktikum-services.tech/

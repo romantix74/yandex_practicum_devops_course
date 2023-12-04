@@ -35,7 +35,8 @@ build-backend-code-job:
     - cd backend
     - >
       mvn package -Dmaven.repo.local=${MAVEN_REPO_PATH}
-      -Dversion.application=${VERSION} -DSPRING_FLYWAY_ENABLED=false
+      -Dversion.application=${VERSION}
+  environment: SPRING_FLYWAY_ENABLED=false
 
   artifacts:
     paths:

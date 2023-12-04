@@ -9,6 +9,7 @@ variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
   MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
   JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
+  SPRING_FLYWAY_ENABLED: "false"
 
 stages:
   - build
@@ -36,8 +37,6 @@ build-backend-code-job:
     - >
       mvn package -Dmaven.repo.local=${MAVEN_REPO_PATH}
       -Dversion.application=${VERSION}
-  variables: 
-    SPRING_FLYWAY_ENABLED: "false"
 
   artifacts:
     paths:

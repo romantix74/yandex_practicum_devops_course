@@ -2,8 +2,8 @@
 Description=Sausage-store
 
 [Service]
-User=jarservice
-Group=jarservice
+User=backend
+Group=backend
 Environment=REPORT_PATH=/var/sausage-store/reports
 Environment=LOG_PATH=/var/sausage-store/logs
 

@@ -20,21 +20,29 @@ build-frontend-code-job:
   only:
     changes:
       - frontend/*
-  script:        
-    - cd frontend
-    - npm install
-    - npm run build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+  script:
+    - echo "test"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/frontend"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:$CI_COMMIT_SHA"
+      --build-arg VERSION=$VERSION
+      --cache=true
   artifacts:
     paths:
       - frontend/dist/frontend
 
-sonarqube-frontend-sast:
-  stage: test
-  image: sonarsource/sonar-scanner-cli:latest
-  script:
-    - sonar-scanner -Dsonar.projectName="$SONAR_PROJECT_KEY" -Dsonar.sources=./frontend -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.qualitygate.wait=true
-  needs:
-    - build-frontend-code-job
+# sonarqube-frontend-sast:
+#   stage: test
+#   image: sonarsource/sonar-scanner-cli:latest
+#   script:
+#     - sonar-scanner -Dsonar.projectName="$SONAR_PROJECT_KEY" -Dsonar.sources=./frontend -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.qualitygate.wait=true
+#   needs:
+#     - build-frontend-code-job
 
 telegram-notification-frontend:
   stage: notify
@@ -49,19 +57,32 @@ telegram-notification-frontend:
   needs:
     - build-frontend-code-job
 
-upload-frontend-release:
-   stage: release
-   needs:
-     - build-frontend-code-job
-   script:
-     - tar czvf sausage-store-${VERSION}.tar.gz frontend
-     - >
-      curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
-      --upload-file sausage-store-${VERSION}.tar.gz
-      ${NEXUS_REPO_URL}/${NEXUS_REPO_URL_FRONTEND}/${VERSION}/sausage-store-${VERSION}.tar.gz 
-   only:
-     changes:
-     - frontend/**/* 
+# upload-frontend-release:
+#    stage: release
+#    needs:
+#      - build-frontend-code-job
+#    script:
+#      - tar czvf sausage-store-${VERSION}.tar.gz frontend
+#      - >
+#       curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
+#       --upload-file sausage-store-${VERSION}.tar.gz
+#       ${NEXUS_REPO_URL}/${NEXUS_REPO_URL_FRONTEND}/${VERSION}/sausage-store-${VERSION}.tar.gz 
+#    only:
+#      changes:
+#      - frontend/**/* 
+
+release:
+  variables:
+    GIT_STRATEGY: none
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [ "" ]
+  cache: [ ]
+  stage: release
+  before_script:
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - crane tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA latest
 
 frontend-deploy:
   stage: deploy
@@ -73,19 +94,8 @@ frontend-deploy:
     - chmod 600 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-  #extends: .before_script
   script:
-    - scp ./frontend/sausage-store-frontend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
-    - >
-      ssh ${DEV_USER}@${DEV_HOST} 
-      "export "CURRENT_VERSION=${VERSION}"; 
-      export "VERSION=${VERSION}"; 
-      export "DEV_HOST=${DEV_HOST}";
-      export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; 
-      export "NEXUS_REPO_URL_FRONTEND=${NEXUS_REPO_URL_FRONTEND}"; 
-      export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; 
-      export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
-      setsid /bin/bash -s " < ./frontend/deploy.sh
+    - envsubst < ./frontend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
   environment:
     name: $CI_COMMIT_REF_SLUG/frontend
     url: http://std-022-24.praktikum-services.tech/

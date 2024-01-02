@@ -6,6 +6,6 @@ sudo docker rm -f sausage-frontend || true
 sudo docker run --rm -d --name sausage-frontend \
      --network=sausage_network \
      --restart=on-failure:10 \
-     -v /tmp/${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf
+     -v /tmp/${CI_PROJECT_DIR}/frontend/default.conf:/etc/nginx/conf.d/default.conf \
      -p 8080:80 \
      "${CI_REGISTRY_IMAGE}"/sausage-frontend:$CI_COMMIT_SHA

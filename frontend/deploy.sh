@@ -6,4 +6,4 @@ sudo docker rm -f sausage-frontend || true
 sudo docker run --rm -d --name sausage-frontend \
      --network=sausage_network \
      -p 8080:80 \
-     "${CI_REGISTRY_IMAGE}"/sausage-frontend:$VERSION
+     "${CI_REGISTRY_IMAGE}"/sausage-frontend:$CI_COMMIT_SHA

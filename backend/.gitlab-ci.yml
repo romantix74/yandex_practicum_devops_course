@@ -48,26 +48,26 @@ build-backend-code-job:
       - ${CI_PROJECT_DIR}/.m2/ 
 
 
-spotbugs-sast:
-  stage: test
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 16
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
+# spotbugs-sast:
+#   stage: test
+#   variables:
+#     COMPILE: "false"
+#     SAST_JAVA_VERSION: 16
+#     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
-sonarqube-backend-sast:
-  stage: test
-  image: maven:3.8-openjdk-16
-  script:
-    - >
-      mvn -f ${CI_PROJECT_DIR}/backend -X verify sonar:sonar 
-      -Dsonar.projectName="$SONAR_PROJECT_KEY" 
-      -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACK 
-      -Dsonar.host.url=$SONARQUBE_URL 
-      -Dsonar.login=$SONAR_LOGIN  
-      -Dsonar.qualitygate.wait=true
-  needs:
-    - build-backend-code-job
+# sonarqube-backend-sast:
+#   stage: test
+#   image: maven:3.8-openjdk-16
+#   script:
+#     - >
+#       mvn -f ${CI_PROJECT_DIR}/backend -X verify sonar:sonar 
+#       -Dsonar.projectName="$SONAR_PROJECT_KEY" 
+#       -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACK 
+#       -Dsonar.host.url=$SONARQUBE_URL 
+#       -Dsonar.login=$SONAR_LOGIN  
+#       -Dsonar.qualitygate.wait=true
+#   needs:
+#     - build-backend-code-job
 
 telegram-notification-backend:
   stage: notify

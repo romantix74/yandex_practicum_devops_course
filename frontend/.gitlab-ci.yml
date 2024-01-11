@@ -1,5 +1,4 @@
-# include:
-#   - template: Security/SAST.gitlab-ci.yml
+
 
 cache:
   paths:
@@ -10,7 +9,6 @@ variables:
 
 stages:
   - build
-  # - test
   - notify
   - release
   - deploy
@@ -36,13 +34,6 @@ build-frontend-code-job:
     paths:
       - frontend/dist/frontend
 
-# sonarqube-frontend-sast:
-#   stage: test
-#   image: sonarsource/sonar-scanner-cli:latest
-#   script:
-#     - sonar-scanner -Dsonar.projectName="$SONAR_PROJECT_KEY" -Dsonar.sources=./frontend -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.qualitygate.wait=true
-#   needs:
-#     - build-frontend-code-job
 
 telegram-notification-frontend:
   stage: notify
@@ -57,19 +48,6 @@ telegram-notification-frontend:
   needs:
     - build-frontend-code-job
 
-# upload-frontend-release:
-#    stage: release
-#    needs:
-#      - build-frontend-code-job
-#    script:
-#      - tar czvf sausage-store-${VERSION}.tar.gz frontend
-#      - >
-#       curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
-#       --upload-file sausage-store-${VERSION}.tar.gz
-#       ${NEXUS_REPO_URL}/${NEXUS_REPO_URL_FRONTEND}/${VERSION}/sausage-store-${VERSION}.tar.gz 
-#    only:
-#      changes:
-#      - frontend/**/* 
 
 release:
   variables:
@@ -90,7 +68,7 @@ frontend-deploy:
   before_script:
     - apk add openssh-client bash envsubst
     - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts

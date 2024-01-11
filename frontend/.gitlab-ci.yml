@@ -48,7 +48,6 @@ telegram-notification-frontend:
   needs:
     - build-frontend-code-job
 
-
 release:
   variables:
     GIT_STRATEGY: none

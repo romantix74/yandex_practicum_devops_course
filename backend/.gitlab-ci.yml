@@ -1,6 +1,3 @@
-include:
-  - template: Security/SAST.gitlab-ci.yml
-
 cache:
   paths:
     - ${CI_PROJECT_DIR}/.m2/repository
@@ -13,14 +10,9 @@ variables:
 
 stages:
   - build
-  - test
   - notify
   - release
   - deploy
-
-cache:
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository
 
 build-backend-code-job:
   stage: build  
@@ -32,38 +24,24 @@ build-backend-code-job:
   rules: # rules и only в данных случаях взаимозаменяемы
     - changes:
       - backend/**/*
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
   script:
-    - cd backend
-    - >
-      mvn package -Dmaven.repo.local=${MAVEN_REPO_PATH}
-      -Dversion.application=${VERSION}
+    - echo "test"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/backend"
+      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-backend:$CI_COMMIT_SHA"
+      --build-arg VERSION=$VERSION
+      --cache=true
 
   artifacts:
     paths:
       - backend/target/sausage-store-${VERSION}.jar
       - ${CI_PROJECT_DIR}/.m2/ 
 
-
-spotbugs-sast:
-  stage: test
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 16
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-
-sonarqube-backend-sast:
-  stage: test
-  image: maven:3.8-openjdk-16
-  script:
-    - >
-      mvn -f ${CI_PROJECT_DIR}/backend -X verify sonar:sonar 
-      -Dsonar.projectName="$SONAR_PROJECT_KEY" 
-      -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACK 
-      -Dsonar.host.url=$SONARQUBE_URL 
-      -Dsonar.login=$SONAR_LOGIN  
-      -Dsonar.qualitygate.wait=true
-  needs:
-    - build-backend-code-job
 
 telegram-notification-backend:
   stage: notify
@@ -78,41 +56,32 @@ telegram-notification-backend:
   needs:
     - build-backend-code-job
 
-backend-upload-release:
-  stage: release   
-  needs:
-    - build-backend-code-job
-  script:
-    - cd backend
-    - >
-      mvn deploy -DskipTests -s settings.xml
-      -Dmaven.repo.local=${MAVEN_REPO_PATH}
-      -Dversion.application=${VERSION}
 
-deploy:
-  stage: deploy
+release:
+  variables:
+    GIT_STRATEGY: none
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [ "" ]
+  cache: [ ]
+  stage: release
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA latest
+
+
+deploy-backend:
+  stage: deploy
+  image: alpine:3.18
+  before_script:
+    - apk add openssh-client bash envsubst
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-     - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
-     - >
-      ssh ${DEV_USER}@${DEV_HOST} 
-      "export "CURRENT_VERSION=${VERSION}"; 
-      export "VERSION=${VERSION}"; 
-      export "DEV_HOST=${DEV_HOST}";
-      export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; 
-      export "NEXUS_REPO_URL_BACKEND=${NEXUS_REPO_URL_BACKEND}"; 
-      export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; 
-      export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
-      setsid /bin/bash -s " < ./backend/deploy.sh
-  environment:
-    name: $CI_COMMIT_REF_SLUG/backend
-    url: http://std-022-24.praktikum-services.tech/
+  # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
+    - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

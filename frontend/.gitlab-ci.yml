@@ -79,3 +79,4 @@ frontend-deploy:
   environment:
     name: $CI_COMMIT_REF_SLUG/frontend
     url: http://std-022-24.praktikum-services.tech/
+

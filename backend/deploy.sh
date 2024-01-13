@@ -10,5 +10,5 @@ sudo docker run  -d --name sausage-backend \
      --env SPRING_DATA_MONGODB_URI="${SPRING_DATA_MONGODB_URI}" \
      --network=sausage_network \
      --restart=always \
-     "${CI_REGISTRY_IMAGE}"/sausage-backend:latest
+     "${CI_REGISTRY_IMAGE}"/sausage-backend:$CI_COMMIT_SHA
      

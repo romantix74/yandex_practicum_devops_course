@@ -18,7 +18,7 @@ build-backend-report-code-job:
   stage: build  
   rules: 
     - changes:
-      - backend/**/*
+      - backend-report/**/*
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: [""]
@@ -42,7 +42,7 @@ telegram-notification-backend:
   stage: notify
   only:
     changes:
-    - backend/*
+    - backend-report/*
   script:
     - curl -s -X POST https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage 
       -d parse_mode=markdown

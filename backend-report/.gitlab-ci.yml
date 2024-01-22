@@ -51,7 +51,6 @@ telegram-notification-backend:
   needs:
     - build-backend-report-code-job
 
-
 # release:
 #   variables:
 #     GIT_STRATEGY: none

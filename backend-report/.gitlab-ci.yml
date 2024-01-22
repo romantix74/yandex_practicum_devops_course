@@ -49,34 +49,34 @@ telegram-notification-backend:
       -d chat_id=-1001771539978 
       -d text="std-022-024 собрал backend [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-backend-code-job)"
   needs:
-    - build-backend-code-job
+    - build-backend-report-code-job
 
 
-release:
-  variables:
-    GIT_STRATEGY: none
-  image:
-    name: gcr.io/go-containerregistry/crane:debug
-    entrypoint: [ "" ]
-  cache: [ ]
-  stage: release
-  before_script:
-    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA latest
+# release:
+#   variables:
+#     GIT_STRATEGY: none
+#   image:
+#     name: gcr.io/go-containerregistry/crane:debug
+#     entrypoint: [ "" ]
+#   cache: [ ]
+#   stage: release
+#   before_script:
+#     - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#   script:
+#     - crane tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA latest
 
 
-deploy-backend:
-  stage: deploy
-  image: alpine:3.18
-  before_script:
-    - apk add openssh-client bash envsubst
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-  # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-    - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
+# deploy-backend:
+#   stage: deploy
+#   image: alpine:3.18
+#   before_script:
+#     - apk add openssh-client bash envsubst
+#     - eval $(ssh-agent -s)
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   script:
+#   # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
+#     - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

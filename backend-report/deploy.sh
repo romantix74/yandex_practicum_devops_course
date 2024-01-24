@@ -5,6 +5,7 @@ sudo docker network create -d bridge sausage_network || true
 sudo docker rm -f sausage-backend-report || true
 sudo echo $(pwd)
 sudo echo ${CI_PROJECT_DIR}
+sudo ls -l ${CI_PROJECT_DIR}
 sudo VERSION=${VERSION} docker compose -f ${CI_PROJECT_DIR}/docker-compose.yml up -d backend-report
 
 # sudo docker run  -d --name sausage-backend \

@@ -72,7 +72,7 @@ release:
 
 deploy-backend:
   stage: deploy
-  image: alpine:3.18
+  image: docker:20.10.12-dind
   before_script:
     - apk add openssh-client bash envsubst docker-compose
     - eval $(ssh-agent -s)

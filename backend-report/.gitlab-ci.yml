@@ -37,7 +37,6 @@ build-backend-report-code-job:
       - backend-report/target/sausage-store-report-${VERSION}.tar
       - ${CI_PROJECT_DIR}/.m2/ 
 
-
 telegram-notification-backend:
   stage: notify
   only:

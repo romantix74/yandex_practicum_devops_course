@@ -32,8 +32,8 @@ build-backend-code-job:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/backend"
       --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/sausage-backend:$VERSION"
-      --build-arg VERSION=$VERSION
+      --destination "${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}"
+      --build-arg VERSION=${VERSION}
       --cache=true
 
   artifacts:
@@ -67,7 +67,7 @@ release:
   before_script:
     - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:$VERSION latest
+    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} latest
 
 
 deploy-backend:

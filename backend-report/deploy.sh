@@ -2,8 +2,8 @@
 set -xe
 sudo docker login -u ${CI_REGISTRY_USER} -p${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 sudo docker network create -d bridge sausage_network || true
-sudo docker rm -f sausage-backend || true
-sudo VERSION=${VERSION} docker compose -f ../docker-compose.yml up backend-report
+sudo docker rm -f sausage-backend-report || true
+sudo VERSION=${VERSION} docker compose  up -d backend-report # -f ../docker-compose.yml
 
 # sudo docker run  -d --name sausage-backend \
 #      --env SPRING_DATASOURCE_URL="${SPRING_DATASOURCE_URL}" \

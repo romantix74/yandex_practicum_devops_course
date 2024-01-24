@@ -65,17 +65,16 @@ release:
     - crane tag $CI_REGISTRY_IMAGE/sausage-backend-report:$VERSION latest
 
 
-# deploy-backend:
-#   stage: deploy
-#   image: alpine:3.18
-#   before_script:
-#     - apk add openssh-client bash envsubst
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#   # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-#     - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
+deploy-backend-report:
+  stage: deploy
+  before_script:
+    - apk add openssh-client bash envsubst
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+  # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
+    - envsubst < ./backend-report/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

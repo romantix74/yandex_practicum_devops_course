@@ -74,13 +74,27 @@ deploy-backend:
   stage: deploy
   image: alpine:3.18
   before_script:
-    - apk add openssh-client bash envsubst
+    - apk add openssh-client bash envsubst docker-compose
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - docker context create --docker "host=ssh://student@std-022-24.praktikum-services.tech" remote
+    - docker rm -f sausage-backend || true
   script:
-  # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-    - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
+    - docker context use remote
+    - docker-compose -f docker-compose.yml up -d backend
+  # before_script:
+  #   - apk add openssh-client bash envsubst
+  #   - eval $(ssh-agent -s)
+  #   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  #   - mkdir -p ~/.ssh
+  #   - chmod 700 ~/.ssh
+  #   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  #   - chmod 644 ~/.ssh/known_hosts
+  # script:
+  # # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
+  #   - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

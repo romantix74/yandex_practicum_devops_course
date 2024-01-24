@@ -27,7 +27,7 @@ backend-report:
     include:
       - "/backend-report/.gitlab-ci.yml"
     strategy: depend
-  # only:
-  #   changes: 
-  #     - backend-report/**/*
+  only:
+    changes: 
+      - backend-report/**/*
 

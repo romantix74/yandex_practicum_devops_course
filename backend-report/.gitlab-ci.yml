@@ -80,6 +80,4 @@ deploy-backend-report:
   script:
     - docker context use remote
     - docker-compose -f docker-compose.yml up -d backend-report
-  # script:
-  # # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-  #   - envsubst < ./backend-report/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
+

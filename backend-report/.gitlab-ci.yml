@@ -77,10 +77,10 @@ deploy-backend-report:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - docker context create --docker "host=ssh://std-022-24.praktikum-services.tech" remote
+    - docker context create --docker "host=ssh://student@std-022-24.praktikum-services.tech" remote
   script:
     - docker context use remote
-    - docker compose --context remote -f docker-compose.yml up -d backend-report
+    - docker compose -f docker-compose.yml up -d backend-report
   # script:
   # # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
   #   - envsubst < ./backend-report/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

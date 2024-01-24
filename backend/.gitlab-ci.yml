@@ -68,6 +68,7 @@ release:
     - echo ${VERSION}
     - crane tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} latest
 
+
 deploy-backend:
   stage: deploy
   image: docker:20.10.12-dind

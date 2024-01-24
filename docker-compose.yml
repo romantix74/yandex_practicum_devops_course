@@ -22,6 +22,7 @@ services:
     #   .env
     networks:
       - sausage-store
+  
   backend-report:
     build:
       context: backend-report
@@ -32,6 +33,7 @@ services:
       #"mongodb://std-022-024:Testusr1234@rc1a-sui0a7vifhdsk9b1.mdb.yandexcloud.net:27018/std-022-024?tls=true&tlsAllowInvalidCertificates=true"  #"${SPRING_DATA_MONGODB_URI}" #${REPORTS_MONGODB_URI}
     networks:
       - sausage-store
+  
   frontend:
     image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/sausage-frontend:${VERSION}
     container_name: sausage-frontend

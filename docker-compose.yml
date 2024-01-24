@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   backend:
-    image: sausage-backend:${VERSION} # gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/backend:716c4bc432a7829eb3059fbb274583090762b0c2
+    image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/backend:${VERSION}
     # build:
     #   context: backend
     #   dockerfile: Dockerfile 

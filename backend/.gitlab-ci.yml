@@ -41,7 +41,6 @@ build-backend-code-job:
       - backend/target/sausage-store-${VERSION}.jar
       - ${CI_PROJECT_DIR}/.m2/ 
 
-
 telegram-notification-backend:
   stage: notify
   only:
@@ -54,7 +53,6 @@ telegram-notification-backend:
       -d text="std-022-024 собрал backend [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$VERSION/download?job=build-backend-code-job)"
   needs:
     - build-backend-code-job
-
 
 release:
   variables:
@@ -69,7 +67,6 @@ release:
   script:
     - echo ${VERSION}
     - crane tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} latest
-
 
 deploy-backend:
   stage: deploy

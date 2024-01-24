@@ -66,6 +66,7 @@ release:
 
 
 deploy-backend-report:
+  image: alpine:3.18
   stage: deploy
   before_script:
     - apk add openssh-client bash envsubst

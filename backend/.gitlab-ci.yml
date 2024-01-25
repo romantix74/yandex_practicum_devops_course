@@ -85,8 +85,7 @@ deploy-backend:
     - docker context use remote
     - docker rm -f sausage-backend || true
     - docker-compose -f docker-compose.yml up -d backend
- 
-  
+
   # before_script:
   #   - apk add openssh-client bash envsubst
   #   - eval $(ssh-agent -s)

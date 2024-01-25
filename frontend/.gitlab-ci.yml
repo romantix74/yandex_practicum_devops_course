@@ -79,7 +79,6 @@ frontend-deploy:
     #- docker rm -f sausage-frontend || true
     - docker-compose -f docker-compose.yml up -d frontend --no-deps --force-recreate
 
-
   # before_script:
   #   - apk add openssh-client bash envsubst
   #   - eval $(ssh-agent -s)

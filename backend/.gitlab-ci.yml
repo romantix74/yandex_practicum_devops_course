@@ -83,8 +83,8 @@ deploy-backend:
     - docker context create --docker "host=ssh://student@std-022-24.praktikum-services.tech" remote
   script:
     - docker context use remote
-    # - docker rm -f sausage-backend || true
-    - docker-compose -f docker-compose.yml up -d --force-recreate backend
+    - docker rm -f sausage-backend || true
+    - docker-compose -f docker-compose.yml up -d  backend
 
 
   # before_script:

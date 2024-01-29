@@ -78,7 +78,7 @@ frontend-deploy:
     - sleep 60   # чтобы backend успел подняться
     - docker context use remote
     - docker rm -f sausage-frontend || true
-    - docker-compose -f docker-compose.yml up -d --no-deps frontend
+    - docker-compose --context remote up -d frontend
 
   # before_script:
   #   - apk add openssh-client bash envsubst

@@ -47,7 +47,6 @@ services:
       - sausage-store
     depends_on:
       - backend
-    deploy:
     restart: on-failure
 
 networks:

@@ -80,6 +80,7 @@ frontend-deploy:
     - docker rm -f sausage-frontend || true
     - docker-compose --context remote up -d frontend
 
+
   # before_script:
   #   - apk add openssh-client bash envsubst
   #   - eval $(ssh-agent -s)

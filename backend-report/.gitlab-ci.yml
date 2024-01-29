@@ -63,6 +63,7 @@ release:
   script:
     - crane tag $CI_REGISTRY_IMAGE/sausage-backend-report:$VERSION latest
 
+
 deploy-backend-report:
   image: alpine:3.18
   stage: deploy

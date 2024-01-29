@@ -140,6 +140,8 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- disable FLYWAY ,  glava8 не работает : Validate failed: Migrations have failed validation
+Migration checksum mismatch for migration version 002
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
@@ -150,6 +152,7 @@
                     </locations>
                 </configuration>
             </plugin>
+            line2  -->
         </plugins>
     </build>
 

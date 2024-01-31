@@ -39,14 +39,16 @@ services:
   
   
   frontend:
-    image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/sausage-frontend:${VERSION} 
-    container_name: sausage-frontend
+    image: gitlab.praktikum-services.ru:5050/std-022-039/sausage-store/frontend:${VERSION}
+    container_name: sausage-store-frontend
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      DEFAULT_HOST: sausage-store
     ports:
       - "80:80"
     networks:
       - sausage-store
-    depends_on:
-      - backend
     restart: on-failure
 
 networks:

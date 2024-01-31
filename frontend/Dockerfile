@@ -5,8 +5,10 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-FROM nginx:stable-alpine3.17-slim
-WORKDIR /app
-COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /usr/src/app/dist/frontend ./frontend
+FROM nginxproxy/nginx-proxy
+COPY ./nginx.tmpl /app/nginx.tmpl
+COPY --from=build /usr/src/app/dist/frontend/ /var/www-data/frontend/
+WORKDIR /app/
 EXPOSE 80
+
+

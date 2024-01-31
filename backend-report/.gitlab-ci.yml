@@ -14,45 +14,41 @@ stages:
   - release
   - deploy
 
-build-backend-code-job:
+build-backend-report-code-job:
   stage: build  
-  # only:
-  #   changes:
-  #     - backend/**/*
-  #   variables:
-  #     - $CI_COMMIT_MESSAGE =~ /send notification/
-  rules: # rules и only в данных случаях взаимозаменяемы
+  rules: 
     - changes:
-      - backend/**/*
+      - backend-report/**/*
   image:
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
     entrypoint: [""]
   # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
   script:
+    - echo "$VERSION"
     - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/backend"
-      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/sausage-backend:${VERSION}"
-      --build-arg VERSION=${VERSION}
+      --context "${CI_PROJECT_DIR}/backend-report"
+      --dockerfile "${CI_PROJECT_DIR}/backend-report/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-backend-report:$VERSION"
+      --build-arg VERSION=$VERSION
       --cache=true
 
   artifacts:
     paths:
-      - backend/target/sausage-store-${VERSION}.jar
+      - backend-report/target/sausage-store-report-${VERSION}.tar
       - ${CI_PROJECT_DIR}/.m2/ 
 
 telegram-notification-backend:
   stage: notify
   only:
     changes:
-    - backend/*
+    - backend-report/*
   script:
     - curl -s -X POST https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage 
       -d parse_mode=markdown
       -d chat_id=-1001771539978 
-      -d text="std-022-024 собрал backend [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$VERSION/download?job=build-backend-code-job)"
+      -d text="std-022-024 собрал backend-report [artefact]($CI_PROJECT_URL/-/jobs/artifacts/$VERSION/download?job=build-backend-report-code-job)"
   needs:
-    - build-backend-code-job
+    - build-backend-report-code-job
 
 release:
   variables:
@@ -65,14 +61,14 @@ release:
   before_script:
     - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - echo ${VERSION}
-    - crane tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} latest
+    - crane tag $CI_REGISTRY_IMAGE/sausage-backend-report:$VERSION latest
 
-deploy-backend:
+
+deploy-backend-report:
+  image: alpine:3.18
   stage: deploy
-  image: docker:20.10.12-dind
   before_script:
-    - apk add openssh-client bash docker-compose
+    - apk add openssh-client bash envsubst docker-compose
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -83,17 +79,5 @@ deploy-backend:
     - docker context create --docker "host=ssh://student@std-022-24.praktikum-services.tech" remote
   script:
     - docker context use remote
-    # - docker rm -f sausage-backend || true
-    - docker-compose --context remote up -d --force-recreate backend
+    - docker-compose -f docker-compose.yml up -d backend-report
 
-  # before_script:
-  #   - apk add openssh-client bash envsubst
-  #   - eval $(ssh-agent -s)
-  #   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  #   - mkdir -p ~/.ssh
-  #   - chmod 700 ~/.ssh
-  #   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-  #   - chmod 644 ~/.ssh/known_hosts
-  # script:
-  # # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-  #   - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 

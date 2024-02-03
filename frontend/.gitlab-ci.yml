@@ -6,6 +6,8 @@ cache:
 
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
+  # на замену VERSION
+  FRONTEND_VERSION: 1.0.${CI_PIPELINE_ID}
 
 stages:
   - build
@@ -27,8 +29,8 @@ build-frontend-code-job:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/frontend"
       --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:${VERSION}"
-      --build-arg VERSION=$VERSION
+      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:${FRONTEND_VERSION}"
+      --build-arg FRONTEND_VERSION=$FRONTEND_VERSION
       --cache=true
   artifacts:
     paths:
@@ -59,7 +61,7 @@ release:
   before_script:
     - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - crane tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} latest
+    - crane tag $CI_REGISTRY_IMAGE/sausage-frontend:${FRONTEND_VERSION} latest
 
 frontend-deploy:
   stage: deploy

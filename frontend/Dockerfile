@@ -1,9 +1,9 @@
-# # build
-# FROM node:16.20.0-alpine3.18 as builder
-# WORKDIR /usr/src/app
-# COPY . .
-# RUN npm install
-# RUN npm run build
+# build
+FROM node:16.20.0-alpine3.18 as builder
+WORKDIR /usr/src/app
+COPY . .
+RUN npm install
+RUN npm run build
 
 # FROM nginxproxy/nginx-proxy
 # COPY ./nginx.tmpl /app/nginx.tmpl
@@ -11,12 +11,6 @@
 # WORKDIR /app/
 # EXPOSE 80
 
-# build
-FROM node:16.20.0-alpine3.18 as builder
-WORKDIR /usr/src/app
-COPY . .
-RUN npm install
-RUN npm run build
 
 FROM nginx:stable-alpine3.17-slim
 WORKDIR /app

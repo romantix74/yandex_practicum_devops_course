@@ -67,6 +67,7 @@ frontend-deploy:
   stage: deploy
   image: alpine:3.18
   before_script:
+    - echo ${FRONTEND_VERSION}
     - apk add openssh-client bash docker-compose
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -

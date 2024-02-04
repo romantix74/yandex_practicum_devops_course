@@ -7,7 +7,7 @@ RUN npm run build
 
 FROM nginxproxy/nginx-proxy
 COPY ./nginx.tmpl /app/nginx.tmpl
-COPY --from=build /usr/src/app/dist/frontend/ /var/www-data/frontend/
+COPY --from=builder /usr/src/app/dist/frontend/ /var/www-data/frontend/
 WORKDIR /app/
 EXPOSE 80
 

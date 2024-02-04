@@ -14,13 +14,7 @@ services:
       SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}" #jdbc:postgresql://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_PORT}/${SPRING_DATASOURCE_DATABASE}
       SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
       SPRING_DATA_MONGODB_URI: "${SPRING_DATA_MONGODB_URI}"
-
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://rc1a-swsg2g6j6bhznvm0.mdb.yandexcloud.net:6432/std-022-024
-      #SPRING_DATASOURCE_USERNAME: std-022-024
-      # SPRING_DATASOURCE_PASSWORD: Testusr1234
-      # SPRING_DATA_MONGODB_URI=mongodb://std-022-024:Testusr1234@rc1a-sui0a7vifhdsk9b1.mdb.yandexcloud.net:27018/report?tls=true
-    # env_file:
-    #   .env
+      VIRTUAL_HOST: sausage-store
     networks:
       - sausage-store
     restart: on-failure

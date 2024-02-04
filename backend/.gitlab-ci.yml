@@ -86,7 +86,6 @@ deploy-backend:
     # - docker rm -f sausage-backend || true
     - docker-compose --context remote up -d --force-recreate backend
 
-
   # before_script:
   #   - apk add openssh-client bash envsubst
   #   - eval $(ssh-agent -s)

@@ -36,8 +36,7 @@ services:
     networks:
       - sausage-store
     restart: on-failure
-  
-  
+    
   frontend:
     image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/sausage-frontend:${FRONTEND_VERSION:-latest}
     container_name: sausage-store-frontend

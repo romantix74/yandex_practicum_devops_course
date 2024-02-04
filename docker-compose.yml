@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   backend:
-    image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/sausage-backend:${VERSION:-latest}
+    image: ${DOCKER_REGISTRY}/sausage-backend:${VERSION:-latest}
     # build:
     #   context: backend
     #   dockerfile: Dockerfile 
@@ -38,7 +38,7 @@ services:
     restart: on-failure
     
   frontend:
-    image: gitlab.praktikum-services.ru:5050/std-022-024/sausage-store/sausage-frontend:${FRONTEND_VERSION:-latest}
+    image: ${DOCKER_REGISTRY}/sausage-frontend:${FRONTEND_VERSION:-latest}
     container_name: sausage-store-frontend
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro

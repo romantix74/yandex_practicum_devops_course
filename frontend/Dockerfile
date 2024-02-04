@@ -12,10 +12,5 @@ WORKDIR /app/
 EXPOSE 80
 
 
-# FROM nginx:stable-alpine3.17-slim
-# WORKDIR /app
-# COPY default.conf /etc/nginx/conf.d/default.conf
-# COPY --from=builder /usr/src/app/dist/frontend ./frontend
-# EXPOSE 80
 
 

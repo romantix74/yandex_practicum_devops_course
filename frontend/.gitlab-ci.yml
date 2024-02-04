@@ -80,8 +80,8 @@ frontend-deploy:
   script:
     - sleep 60   # чтобы backend успел подняться
     - docker context use remote
-    # - >
-    #   export FRONTEND_VERSION=${FRONTEND_VERSION}
+    - >
+      export FRONTEND_VERSION=${FRONTEND_VERSION}
 
     # - docker rm -f sausage-frontend || true
     - docker-compose --context remote up -d --force-recreate --no-deps frontend

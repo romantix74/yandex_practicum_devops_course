@@ -84,7 +84,8 @@ deploy-backend:
   script:
     - docker context use remote
     # - docker rm -f sausage-backend || true
-    - docker-compose --context remote up -d --force-recreate backend
+    - docker-compose --context remote up -d --force-recreate backend-blue
+    - docker-compose --context remote up -d --force-recreate backend-green
 
   # before_script:
   #   - apk add openssh-client bash envsubst

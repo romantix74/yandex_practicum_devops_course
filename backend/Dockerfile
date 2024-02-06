@@ -15,7 +15,8 @@ RUN keytool -importcert -file YandexInternalRootCA.crt \
     -alias yandex -cacerts -storepass changeit -noprompt \
     && rm -rf YandexInternalRootCA.crt \
     && addgroup --system jaruser \
-    && adduser -S -s /bin/false -G jaruser jaruser -D -H
+    && adduser -S -s /bin/false -G jaruser jaruser -D -H \
+    && apk add curl
 COPY --chown=jaruser:jaruser \
      --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar
 EXPOSE 8080

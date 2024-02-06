@@ -18,8 +18,7 @@ RUN keytool -importcert -file YandexInternalRootCA.crt \
     && addgroup --system jaruser \
     && adduser -S -s /bin/false -G jaruser jaruser -D -H 
 COPY --chown=jaruser:jaruser \
-     --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar \
-     --from=builder /bin/curl /bin/
+     --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar 
 EXPOSE 8080
 USER jaruser
 ENTRYPOINT ["java", "-jar", "-Dmyserver.bindPort=8080", "/app/sausage-store.jar"]

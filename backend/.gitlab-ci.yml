@@ -92,7 +92,7 @@ deploy-backend:
     - echo $blue_status
     - echo $green_status
     - >
-      if [ $blue == 'healthy' ]; then
+      if [ "$blue" == 'healthy' ]; then
           docker-compose --context remote pull backend-green
           docker-compose --context remote up -d --force-recreate backend-green
           while [ $(docker --context remote container inspect --format "{{json .State.Health }}" backend-green | jq -r '.Status') != 'healthy' ]

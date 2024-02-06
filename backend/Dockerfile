@@ -4,7 +4,8 @@ WORKDIR /usr/src/app
 COPY ./src ./src
 COPY *.xml ./
 RUN wget -O  YandexInternalRootCA.crt https://storage.yandexcloud.net/cloud-certs/CA.pem \
-    && mvn package -Dversion.application=${VERSION} -Dmaven.test.skip=true
+    && mvn package -Dversion.application=${VERSION} -Dmaven.test.skip=true \
+    && apk add curl
 
 # шаг релиза
 FROM bellsoft/liberica-runtime-container:jre-17-slim-musl
@@ -15,10 +16,10 @@ RUN keytool -importcert -file YandexInternalRootCA.crt \
     -alias yandex -cacerts -storepass changeit -noprompt \
     && rm -rf YandexInternalRootCA.crt \
     && addgroup --system jaruser \
-    && adduser -S -s /bin/false -G jaruser jaruser -D -H \
-    && apk add curl
+    && adduser -S -s /bin/false -G jaruser jaruser -D -H 
 COPY --chown=jaruser:jaruser \
-     --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar
+     --from=builder /usr/src/app/target/sausage-store-${VERSION}.jar ./sausage-store.jar \
+     --from=builder /bin/curl /bin/
 EXPOSE 8080
 USER jaruser
 ENTRYPOINT ["java", "-jar", "-Dmyserver.bindPort=8080", "/app/sausage-store.jar"]

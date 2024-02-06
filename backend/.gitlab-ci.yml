@@ -70,7 +70,7 @@ release:
 
 deploy-backend:
   stage: deploy
-  image: docker:20.10.12-dind
+  image: alpine:3.18 #docker:20.10.12-dind
   before_script:
     - apk add openssh-client bash docker-compose jq
     - eval $(ssh-agent -s)
@@ -88,7 +88,7 @@ deploy-backend:
     # - docker-compose --context remote up -d --force-recreate backend-green
     
     - blue_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" blue-backend | jq -r '.Status') || true
-    - green_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" green-backend | jq -r '.Status') || true
+    - green_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" backend-green | jq -r '.Status') || true
     - echo $blue_status
     - echo $green_status
     - >

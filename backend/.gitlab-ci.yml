@@ -87,7 +87,7 @@ deploy-backend:
     # - docker-compose --context remote up -d --force-recreate backend-blue
     # - docker-compose --context remote up -d --force-recreate backend-green
     
-    - blue_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" blue-backend | jq -r '.Status') || true
+    - blue_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" backend-blue | jq -r '.Status') || true
     - green_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" backend-green | jq -r '.Status') || true
     - echo $blue_status
     - echo $green_status

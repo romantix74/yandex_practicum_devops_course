@@ -70,9 +70,9 @@ release:
 
 deploy-backend:
   stage: deploy
-  image: docker:20.10.12-dind
+  image: alpine:3.18 #docker:20.10.12-dind
   before_script:
-    - apk add openssh-client bash docker-compose
+    - apk add openssh-client bash docker-compose jq
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -83,17 +83,32 @@ deploy-backend:
     - docker context create --docker "host=ssh://student@std-022-24.praktikum-services.tech" remote
   script:
     - docker context use remote
-    # - docker rm -f sausage-backend || true
-    - docker-compose --context remote up -d --force-recreate backend
 
-  # before_script:
-  #   - apk add openssh-client bash envsubst
-  #   - eval $(ssh-agent -s)
-  #   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  #   - mkdir -p ~/.ssh
-  #   - chmod 700 ~/.ssh
-  #   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-  #   - chmod 644 ~/.ssh/known_hosts
-  # script:
-  # # подставим переменные в скрипт deploy.sh и выполним его на целевом хосте, где развернем сосисочный бэкенд    
-  #   - envsubst < ./backend/deploy.sh|ssh ${DEV_USER}@${DEV_HOST} 
+    # - docker-compose --context remote up -d --force-recreate backend-blue
+    # - docker-compose --context remote up -d --force-recreate backend-green
+    
+    - blue_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" backend-blue | jq -r '.Status') || true
+    - green_status=$(docker --context remote container inspect  --format "{{json .State.Health }}" backend-green | jq -r '.Status') || true
+    - echo $blue_status
+    - echo $green_status
+    - >
+      if [ "$blue_status" == 'healthy' ]; then
+          docker-compose --context remote pull backend-green
+          docker-compose --context remote up -d --force-recreate backend-green
+          while [ $(docker --context remote container inspect --format "{{json .State.Health }}" backend-green | jq -r '.Status') != 'healthy' ]
+          do
+              sleep 5
+          done
+          docker-compose --context remote stop backend-blue
+          echo "Deploy GREEN succesfully"
+      else
+          docker-compose --context remote pull backend-blue
+          docker-compose --context remote up -d --force-recreate backend-blue
+          while [ $(docker --context remote container inspect  --format "{{json .State.Health }}" backend-blue | jq -r '.Status') != 'healthy' ]
+          do
+              sleep 5
+          done
+          docker-compose --context remote stop backend-green
+          echo "Deploy BLUE succesfully"
+      fi
+

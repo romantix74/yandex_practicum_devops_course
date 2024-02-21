@@ -79,4 +79,3 @@ deploy-backend-report:
   script:
     - docker context use remote
     - docker-compose -f docker-compose.yml up -d backend-report
-

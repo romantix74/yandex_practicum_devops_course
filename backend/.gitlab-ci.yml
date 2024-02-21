@@ -111,4 +111,3 @@ deploy-backend:
           docker-compose --context remote stop backend-green
           echo "Deploy BLUE succesfully"
       fi
-
